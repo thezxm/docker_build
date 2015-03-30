@@ -1,0 +1,11 @@
+[sce]
+name=sce
+baseurl=http://192.168.93.16/docker/
+enabled=1
+gpgcheck=0
+
+[rhel]
+name=rhel
+baseurl=http://192.168.93.16/rhel/
+enabled=1
+gpgcheck=0

@@ -1,0 +1,2 @@
+ps -ef|grep java|grep APPID|awk '{print $2}' | xargs /opt/apps/jdk/bin/jstack -F > /opt/logs/jvmstack.log
+ps -ef|grep java|grep APPID|awk '{print $2}' | xargs /opt/apps/jdk/bin/jmap -heap  > /opt/logs/jvmheap.log

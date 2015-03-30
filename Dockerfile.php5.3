@@ -1,0 +1,20 @@
+# nginx php
+#
+# PHP VERSION               5.3.28
+
+FROM images.docker.sohuno.com/redhat:7.0
+MAINTAINER "XueMingZhang@sohu-inc.com"
+
+COPY sce_docker.repo /etc/yum.repos.d/
+
+RUN yum  -y install php-5.3.28 nginx
+
+RUN         ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
+RUN         ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
+
+COPY start.sh /sbin/
+
+EXPOSE      22
+EXPOSE      80
+
+CMD ["/sbin/start.sh"]

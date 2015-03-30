@@ -1,0 +1,21 @@
+# nginx
+#
+# VERSION               1.6.0
+
+FROM images.docker.sohuno.com/redhat:7.0
+MAINTAINER "XueMingZhang@sohu-inc.com"
+
+COPY sce_docker.repo /etc/yum.repos.d/
+
+RUN yum  -y install nginx
+
+RUN useradd app
+
+RUN mkdir -p /opt/logs /opt/conf /opt/scripts /opt/src
+COPY nginx /opt/scripts/nginx
+COPY sce /opt/scripts/sce 
+COPY start.sh /sbin/
+
+EXPOSE   22 80
+
+CMD ["/sbin/start.sh"]
