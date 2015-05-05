@@ -1,0 +1,5 @@
+[php5]
+name=php5
+baseurl=http://mtpc.sohu.com/redhat7/php5/
+enabled=1
+gpgcheck=0

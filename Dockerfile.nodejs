@@ -3,8 +3,18 @@
 # VERSION               1.7.0
 
 FROM images.docker.sohuno.com/nginx:1.6.0
-MAINTAINER "XueMingZhang@sohu-inc.com"
+#MAINTAINER "XueMingZhang@sohu-inc.com"
 
-RUN yum  -y install jdk node
+RUN yum clean all && yum  -y install jdk node
+
+COPY nodejs/nodejs.sh /opt/scripts/sce/nodejs.sh
+
+ENV JAVA_HOME=/opt/apps/jdk \
+    CLASSPATH=./:$JAVA_HOME/lib:$JAVA_HOME/lib/tools.jar \
+    PATH=$JAVA_HOME/bin:$PATH
+
+ENV NODEJS=/opt/scripts/sce/nodejs.sh \
+    SERVER_START=/opt/scripts/sce/nodejs.sh \
+    NODE_PATH=/opt/apps/node/lib/node_modules/
 
 CMD ["/sbin/start.sh"]

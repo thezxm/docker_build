@@ -1,0 +1,32 @@
+# JDK
+#
+# VERSION               1.7.0
+
+FROM images.docker.sohuno.com/redhat:7.0
+
+COPY sce_docker.repo /etc/yum.repos.d/
+
+RUN yum  -y install jdk
+
+ENV JAVA_HOME=/opt/apps/jdk \
+    CLASSPATH=./:$JAVA_HOME/lib:$JAVA_HOME/lib/tools.jar \
+    PATH=$JAVA_HOME/bin:$PATH
+
+RUN useradd app;mkdir -p /opt/logs /opt/conf /opt/scripts /opt/src /opt/libs;chown -R app:app /opt/logs /opt/conf /opt/scripts /opt/src /opt/libs
+
+COPY python/uwsgi.sh /opt/scripts/sce/uwsgi.sh
+COPY sce /opt/scripts/sce
+COPY start.sh /sbin/
+
+ENV USER_DIR=/opt/src \
+    WEB_DIR=/opt/src/web \
+    WEB_PORT=8080 \
+    SCOPE=release \
+    SCE_HEALTH_IGNORE=true
+
+COPY sce /opt/scripts/sce 
+COPY start.sh /sbin/
+
+EXPOSE   22 80
+
+CMD ["/sbin/start.sh"]

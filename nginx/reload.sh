@@ -5,4 +5,4 @@
 sleep 1
 /opt/apps/nginx/sbin/nginx -c /opt/conf/nginx/nginx-sce.conf -s reload
 sleep 1
-ps -fw -p `cat /opt/conf/nginx/nginx.pid` --ppid `cat /opt/conf/nginx/nginx.pid`
+ps -ef |grep -w nginx

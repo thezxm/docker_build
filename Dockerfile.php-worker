@@ -10,7 +10,7 @@ RUN yum clean all && yum  -y install libmemcached-1.0.8 php-5.3.28
 ENV PHP_HOME=/opt/apps/php \
     PHP_VERSION=5.3.28 \
     PHP_FPM_START=/opt/scripts/sce/phpfpmrestart.sh \
-    SERVER_START=/opt/scripts/sce/phpfpmrestart.sh 
+    SERVER_START=/opt/scripts/sce/phpfpmrestart.sh
 
 #COPY php/php.ini $PHP_HOME/lib/php.ini
 COPY php/php-fpm.conf /opt/conf/php-fpm.conf

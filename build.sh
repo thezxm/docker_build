@@ -6,7 +6,7 @@ registry="images.docker.sohuno.com"
 usage ()
 {
     echo " "
-    echo -e " \033[32;49;1m `basename $0` [redhat|nginx|php|java|python|jetty] \033[39;49;0m"
+    echo -e " \033[32;49;1m `basename $0` [redhat|nginx|<php5.3|php5.5|php-worker>|java|python|jetty] \033[39;49;0m"
     echo " "
     exit 1
 
@@ -67,51 +67,86 @@ redhat)
 	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
 	tag=7.0
 	redhat_base
-	docker build --force-rm -t $registry/$name:$tag -f Dockerfile.systemctl .
-	docker tag -f $(docker images  -q $registry/$name:$tag) $registry/$name
-	docker push  $registry/$name
+	docker build --no-cache --force-rm --rm -t $registry/$name:$tag -f Dockerfile.systemctl .
+	docker tag -f $(docker images  -q $registry/$name) $registry/$name:$tag
+	docker push  $registry/$name:$tag
 ;;
 nginx)
 	tag=1.6.0
 	[ -f Dockerfile.$name ] || { echo -e "\033[32;49;1m Dockerfile.$name is not exist!\033[39;49;0m";exit; }
 	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
-	docker build --force-rm -t $registry/$name:$tag -f Dockerfile.$name .
-	docker tag -f $(docker images  -q $registry/$name:$tag) $registry/$name
-	docker push  $registry/$name
+	docker build --no-cache --force-rm --rm -t $registry/$name:$tag -f Dockerfile.$name .
+	docker tag -f $(docker images  -q $registry/$name) $registry/$name:$tag
+	docker push  $registry/$name:$tag
 ;;
 python)
 	tag=2.7.8
 	[ -f Dockerfile.$name ] || { echo -e "\033[32;49;1m Dockerfile.$name is not exist!\033[39;49;0m";exit; }
 	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
-	docker build --force-rm -t $registry/$name:$tag -f Dockerfile.$name .
-	docker tag -f $(docker images  -q $registry/$name:$tag) $registry/$name
-	docker push  $registry/$name
+	docker build --no-cache --force-rm -t $registry/$name:$tag -f Dockerfile.$name .
+	docker tag -f $(docker images  -q $registry/$name) $registry/$name:$tag
+	docker push  $registry/$name:$tag
 ;;
-php)
+python-worker)
+	tag=2.7.8
 	[ -f Dockerfile.$name ] || { echo -e "\033[32;49;1m Dockerfile.$name is not exist!\033[39;49;0m";exit; }
 	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
-	docker build --force-rm -t $registry/$name -f Dockerfile.$name .
+	docker build --no-cache --force-rm -t $registry/$name -f Dockerfile.$name .
 	docker tag -f $(docker images  -q $registry/$name) $registry/$name
 	docker push  $registry/$name
 ;;
-jdk)
+django)
+	tag=2.7.8
 	[ -f Dockerfile.$name ] || { echo -e "\033[32;49;1m Dockerfile.$name is not exist!\033[39;49;0m";exit; }
 	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
-	docker build --force-rm -t $registry/$name -f Dockerfile.$name .
+	tar zxf /opt/zxm/soft/Django-1.5.1.tar.gz
+	docker build --no-cache --force-rm -t $registry/$name -f Dockerfile.$name .
+	docker tag -f $(docker images  -q $registry/$name) $registry/$name
+	docker push  $registry/$name
+	rm -rf Django-1.5.1
+;;
+php-worker)
+	tag=5.3.28
+	[ -f Dockerfile.$name ] || { echo -e "\033[32;49;1m Dockerfile.$name is not exist!\033[39;49;0m";exit; }
+	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
+	docker build --no-cache --force-rm --rm -t $registry/$name -f Dockerfile.$name .
+	docker tag -f $(docker images  -q $registry/$name) $registry/$name
+	docker push  $registry/$name
+;;
+php5.3)
+	tag=5.3.28
+	[ -f Dockerfile.$name ] || { echo -e "\033[32;49;1m Dockerfile.$name is not exist!\033[39;49;0m";exit; }
+	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
+	docker build --no-cache --force-rm --rm -t $registry/php:$tag -f Dockerfile.$name .
+	docker tag -f $(docker images $registry/php|grep $tag |awk '{print $3}') $registry/php:$tag
+	docker push  $registry/php:$tag
+;;
+php5.5)
+	tag=5.5.13
+	[ -f Dockerfile.$name ] || { echo -e "\033[32;49;1m Dockerfile.$name is not exist!\033[39;49;0m";exit; }
+	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
+	docker build --no-cache --force-rm --rm -t $registry/php:$tag -f Dockerfile.$name .
+	docker tag -f $(docker images $registry/php|grep $tag |awk '{print $3}') $registry/php:$tag
+	docker push  $registry/php:$tag
+;;
+java-worker)
+	[ -f Dockerfile.$name ] || { echo -e "\033[32;49;1m Dockerfile.$name is not exist!\033[39;49;0m";exit; }
+	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
+	docker build --no-cache --force-rm -t $registry/$name -f Dockerfile.$name .
 	docker tag -f $(docker images  -q $registry/$name) $registry/$name
 	docker push  $registry/$name
 ;;
 jetty)
 	[ -f Dockerfile.$name ] || { echo -e "\033[32;49;1m Dockerfile.$name is not exist!\033[39;49;0m";exit; }
 	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
-	docker build --force-rm -t $registry/$name -f Dockerfile.$name .
+	docker build --no-cache --force-rm --rm -t $registry/$name -f Dockerfile.$name .
 	docker tag -f $(docker images  -q $registry/$name) $registry/$name
 	docker push  $registry/$name
 ;;
 resin)
 	[ -f Dockerfile.$name ] || { echo -e "\033[32;49;1m Dockerfile.$name is not exist!\033[39;49;0m";exit; }
 	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
-	docker build --force-rm -t $registry/$name -f Dockerfile.$name .
+	docker build --no-cache --force-rm -t $registry/$name -f Dockerfile.$name .
 	docker tag -f $(docker images  -q $registry/$name) $registry/$name
 	docker push  $registry/$name
 
@@ -119,21 +154,28 @@ resin)
 tomcat)
 	[ -f Dockerfile.$name ] || { echo -e "\033[32;49;1m Dockerfile.$name is not exist!\033[39;49;0m";exit; }
 	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
-	docker build --force-rm -t $registry/$name -f Dockerfile.$name .
+	docker build --no-cache --force-rm -t $registry/$name -f Dockerfile.$name .
 	docker tag -f $(docker images  -q $registry/$name) $registry/$name
 	docker push  $registry/$name
 ;;
 nodejs)
 	[ -f Dockerfile.$name ] || { echo -e "\033[32;49;1m Dockerfile.$name is not exist!\033[39;49;0m";exit; }
 	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
-	docker build --force-rm -t $registry/$name -f Dockerfile.$name .
+	docker build --no-cache --force-rm -t $registry/$name -f Dockerfile.$name .
 	docker tag -f $(docker images  -q $registry/$name) $registry/$name
 	docker push  $registry/$name
 ;;
 ruby)
 	[ -f Dockerfile.$name ] || { echo -e "\033[32;49;1m Dockerfile.$name is not exist!\033[39;49;0m";exit; }
 	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
-	docker build --force-rm -t $registry/$name -f Dockerfile.$name .
+	docker build --no-cache --force-rm -t $registry/$name -f Dockerfile.$name .
+	docker tag -f $(docker images  -q $registry/$name) $registry/$name
+	docker push  $registry/$name
+;;
+lua)
+	[ -f Dockerfile.$name ] || { echo -e "\033[32;49;1m Dockerfile.$name is not exist!\033[39;49;0m";exit; }
+	echo -e "\033[32;49;1m Start build $name images.....\033[39;49;0m"
+	docker build --no-cache --force-rm -t $registry/$name -f Dockerfile.$name .
 	docker tag -f $(docker images  -q $registry/$name) $registry/$name
 	docker push  $registry/$name
 ;;

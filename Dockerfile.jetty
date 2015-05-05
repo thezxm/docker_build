@@ -3,14 +3,20 @@
 # VERSION               1.7.0
 
 FROM images.docker.sohuno.com/nginx:1.6.0
-MAINTAINER "XueMingZhang@sohu-inc.com"
+#MAINTAINER "XueMingZhang@sohu-inc.com"
 
-RUN yum  -y install jdk jetty
+RUN yum clean all && yum -y install jdk jetty
 
-ENV JAVA_HOME /opt/apps/jdk
-ENV CLASSPATH ./:$JAVA_HOME/lib:$JAVA_HOME/lib/tools.jar
-ENV PATH $JAVA_HOME/bin:$PATH
+COPY jetty/jetty.xml /opt/apps/jetty/etc/
 
-EXPOSE      22 80
+ENV JAVA_HOME=/opt/apps/jdk \
+    CLASSPATH=./:$JAVA_HOME/lib:$JAVA_HOME/lib/tools.jar \
+    PATH=$JAVA_HOME/bin:$PATH JETTY_HOME=/opt/apps/jetty SCE_JETTY_HOME=/opt/apps/jetty \
+    JETTY_START=/opt/scripts/webserver/jetty/jetty.sh  SERVER_START=$JETTY_START
+
+#ENV JETTY_HOME /opt/apps/jetty
+#ENV SCE_JETTY_HOME /opt/apps/jetty
+#ENV JETTY_START /opt/scripts/webserver/jetty/jetty.sh
+#ENV SERVER_START $JETTY_START
 
 CMD ["/sbin/start.sh"]

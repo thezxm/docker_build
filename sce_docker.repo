@@ -1,11 +1,11 @@
 [sce]
 name=sce
-baseurl=http://192.168.93.16/docker/
+baseurl=http://mtpc.sohu.com/redhat7/docker/
 enabled=1
 gpgcheck=0
 
 [rhel]
 name=rhel
-baseurl=http://192.168.93.16/rhel/
+baseurl=http://mtpc.sohu.com/redhat7/rhel7/
 enabled=1
 gpgcheck=0

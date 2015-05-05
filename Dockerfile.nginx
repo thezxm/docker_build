@@ -3,18 +3,28 @@
 # VERSION               1.6.0
 
 FROM images.docker.sohuno.com/redhat:7.0
-MAINTAINER "XueMingZhang@sohu-inc.com"
+#MAINTAINER "XueMingZhang@sohu-inc.com"
 
 COPY sce_docker.repo /etc/yum.repos.d/
 
 RUN yum  -y install nginx
 
-RUN useradd app
-
-RUN mkdir -p /opt/logs /opt/conf /opt/scripts /opt/src
-COPY nginx /opt/scripts/nginx
+RUN useradd app;mkdir -p /opt/logs /opt/conf/nginx /opt/scripts /opt/src /opt/libs;chown -R app:app /opt/logs /opt/conf /opt/scripts /opt/src /opt/libs;chmod a+w /opt/apps/nginx/logs
 COPY sce /opt/scripts/sce 
 COPY start.sh /sbin/
+
+COPY nginx/mime.types /opt/conf/nginx/
+COPY nginx/rotate.sh nginx/reload.sh nginx/restart.sh /opt/scripts/nginx/
+#COPY nginx/restart.sh /opt/scripts/nginx/
+
+#RUN chown -R app:app /opt/logs /opt/conf /opt/scripts /opt/src /opt/libs
+#RUN chmod a+w /opt/apps/nginx/logs
+
+ENV USER_DIR=/opt/src \
+    WEB_DIR=/opt/src/web \
+    WEB_PORT=8080 \
+    SCOPE=release \
+    SCE_HEALTH_IGNORE=true
 
 EXPOSE   22 80
 

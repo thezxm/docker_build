@@ -1,15 +1,22 @@
-# nginx jdk resin
+# resin
 #
 # VERSION               1.7.0
 
 FROM images.docker.sohuno.com/nginx:1.6.0
-MAINTAINER "XueMingZhang@sohu-inc.com"
+#MAINTAINER "XueMingZhang@sohu-inc.com"
 
-RUN yum  -y install jdk resin
+RUN yum clean all && yum -y install jdk resin
 
-ENV JAVA_HOME /opt/apps/jdk
-ENV CLASSPATH ./:$JAVA_HOME/lib:$JAVA_HOME/lib/tools.jar
-ENV PATH $JAVA_HOME/bin:$PATH
+ENV JAVA_HOME=/opt/apps/jdk \
+    CLASSPATH=./:$JAVA_HOME/lib:$JAVA_HOME/lib/tools.jar \
+    PATH=$JAVA_HOME/bin:$PATH
 
+ENV RESIN_HOME=/opt/apps/resin  SCE_RESIN_HOME=/opt/apps/resin \
+    RESIN_START=/opt/scripts/webserver/resin/resin SERVER_START=/opt/scripts/webserver/resin/resin
+
+COPY resin/cluster-default.xml $SCE_RESIN_HOME/conf/cluster-default.xml
+COPY resin/resin.properties  $SCE_RESIN_HOME/conf/resin.properties
+COPY resin/resin.xml  $SCE_RESIN_HOME/conf/resin.xml
+COPY resin/app-default.xml  $SCE_RESIN_HOME/conf/app-default.xml
 
 CMD ["/sbin/start.sh"]

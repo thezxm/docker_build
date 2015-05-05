@@ -2,20 +2,17 @@
 #
 # VERSION               2.7.8
 
-FROM images.docker.sohuno.com/redhat:7.0
-MAINTAINER "XueMingZhang@sohu-inc.com"
+FROM images.docker.sohuno.com/nginx:1.6.0
+#MAINTAINER "XueMingZhang@sohu-inc.com"
 
-COPY sce_docker.repo /etc/yum.repos.d/
+RUN yum clean all && yum -y install python-sce
 
-RUN yum  -y install python-sce
+ENV PYTHON_HOME=/opt/apps/python \
+    UWSGI_START=/opt/scripts/sce/uwsgi.sh SERVER_START=/opt/scripts/sce/uwsgi.sh
 
-RUN useradd app
+ENV PYTHON_UWSGI_START="uwsgi --socket :9090 --wsgi-file /opt/src/app/hello.py -d /tmp/tst --pythonpath /opt/src/app --harakiri 30 --uid app --gid app"
 
-RUN mkdir -p /opt/logs /opt/conf /opt/scripts /opt/src
-COPY nginx /opt/scripts/nginx
-COPY sce /opt/scripts/sce 
+COPY python/uwsgi.sh /opt/scripts/sce/uwsgi.sh
 COPY start.sh /sbin/
-
-EXPOSE      22
 
 CMD ["/sbin/start.sh"]

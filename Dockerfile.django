@@ -1,0 +1,13 @@
+# python
+#
+# VERSION               2.7.8
+
+FROM images.docker.sohuno.com/python:2.7.8
+#MAINTAINER "XueMingZhang@sohu-inc.com"
+
+COPY Django-1.5.1 /opt/apps_install/Django-1.5.1
+RUN cd /opt/apps_install/Django-1.5.1; /opt/apps/python/bin/python setup.py install
+
+EXPOSE   80
+
+CMD ["/sbin/start.sh"]

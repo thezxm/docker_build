@@ -1,0 +1,30 @@
+# python
+#
+# VERSION               2.7.8
+
+FROM images.docker.sohuno.com/redhat:7.0
+#MAINTAINER "XueMingZhang@sohu-inc.com"
+
+COPY sce_docker.repo /etc/yum.repos.d/
+
+RUN yum -y install python-sce
+
+ENV PYTHON_HOME=/opt/apps/python  UWSGI_START=/opt/scripts/sce/uwsgi.sh  SERVER_START=/opt/scripts/sce/uwsgi.sh
+
+ENV PYTHON_UWSGI_START="uwsgi --socket :9090 --wsgi-file /opt/src/app/hello.py -d /tmp/tst --pythonpath /opt/src/app --harakiri 30 --uid app --gid app"
+
+RUN useradd app;mkdir -p /opt/logs /opt/conf /opt/scripts /opt/src /opt/libs;chown -R app:app /opt/logs /opt/conf /opt/scripts /opt/src /opt/libs
+
+COPY python/uwsgi.sh /opt/scripts/sce/uwsgi.sh
+COPY sce /opt/scripts/sce
+COPY start.sh /sbin/
+
+ENV USER_DIR=/opt/src \
+    WEB_DIR=/opt/src/web \
+    WEB_PORT=8080 \
+    SCOPE=release \
+    SCE_HEALTH_IGNORE=true
+
+EXPOSE     22
+
+CMD ["/sbin/start.sh"]

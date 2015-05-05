@@ -3,28 +3,28 @@
 #   Sohu Cloud Engine V2.0 (SCE) SOHU.COM Crop. Copyright@2013
 #
 #       start.sh 
-#                                       alexzhang@sohu-inc.com
+#       alexzhang@sohu-inc.com
 #
 ###############################################################################
 
+source /opt/scripts/sce/setenv.sh
+
 current=/opt/scripts/sce
 cmd=$1
-curl=/usr/bin/curl
-md5sum=/usr/bin/md5sum
-awk=/bin/awk
 
 PID_FILE='/opt/conf/pid'
 
 #TIMESTAMP=`date +%s`
-TIMESTAMP='SCE '
+TIMESTAMP=EMPTY
 MAX_ERROR=0
 LOGFILE='/opt/logs/agent.log'
 
-stdout=/opt/logs/stdout_505054297.log
-stderr=/opt/logs/stderr_505054297.log
+stdout=/opt/logs/stdout_${APPID}.log
+stderr=/opt/logs/stderr_${APPID}.log
 
 chown=/bin/chown
 chgrp=/bin/chgrp
+
 
 init()
 {
@@ -35,19 +35,20 @@ init()
         mkdir -p /opt/conf
     fi
     echo 0 > /opt/conf/app_counter
-
+    
+    
     #$chown -R app:app /opt/src
     #$chown -R app:app /home/app
 
     #if [ -d /opt/src/bin ]; then
     #    chmod +x /opt/src/bin/*
     #fi
+
 }
 
 startup()
 {
-    source /opt/scripts/sce/setenv.sh
-    sh="$NODEJS $USER_DIR/bin/www"
+    sh="$SERVER_START restart"
     _start $sh
 }
 
@@ -67,18 +68,14 @@ _start()
 
     cd /opt/src
 
-    chmod +x $sh
-
     $sh 1>>$stdout 2>>$stderr &
 
     disown $!
     echo $! > $PID_FILE
 
-    cd $here
     log "Start $APPID - $INSTANCEID ($sh) start success. "
 
 }
-
 
 _stop()
 {
@@ -104,7 +101,6 @@ _stop()
 log() 
 {
     #logdate=`date '+%Y-%m-%d %H:%M:%S'`
-    logdate='[SCE]'
     echo "$logdate $1" >> $LOGFILE
 }
 
@@ -133,3 +129,4 @@ case $cmd in
     ;;
 esac
 exit 0
+

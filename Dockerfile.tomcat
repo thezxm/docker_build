@@ -1,10 +1,19 @@
-# jdk tomcat
+# tomcat
 #
 # VERSION               1.7.0
 
 FROM images.docker.sohuno.com/nginx:1.6.0
-MAINTAINER "XueMingZhang@sohu-inc.com"
+#MAINTAINER "XueMingZhang@sohu-inc.com"
 
-RUN yum  -y install jdk apache-tomcat
+RUN yum clean all && yum  -y install jdk apache-tomcat
+
+ENV JAVA_HOME=/opt/apps/jdk  CLASSPATH=./:$JAVA_HOME/lib:$JAVA_HOME/lib/tools.jar PATH=$JAVA_HOME/bin:$PATH \
+    TOMCAT_START=/opt/scripts/webserver/apache-tomcat/restart.sh \
+    SERVER_START=/opt/scripts/webserver/apache-tomcat/restart.sh \
+    SCE_TOMCAT_HOME=/opt/apps/apache-tomcat
+
+COPY tomcat/context.xml $SCE_TOMCAT_HOME/conf/
+COPY tomcat/server.xml $SCE_TOMCAT_HOME/conf/
+COPY tomcat/web.xml $SCE_TOMCAT_HOME/conf/
 
 CMD ["/sbin/start.sh"]
